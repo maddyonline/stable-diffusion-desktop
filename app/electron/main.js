@@ -1,7 +1,9 @@
 const {
     app,
-    BrowserWindow
+    BrowserWindow,
+    ipcMain
 } = require("electron");
+const path = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
 
 function createWindow() {
@@ -9,7 +11,15 @@ function createWindow() {
     const window = new BrowserWindow({
         width: 800,
         height: 600,
-        show: false
+        show: false,
+        webPreferences: {
+            devTools: true,
+            preload: path.join(__dirname, "preload.js")
+        }
+    });
+    // Event listeners to play music
+    ipcMain.on("RUNNER", (IpcMainEvent, args) => {
+        console.log("RUNNER", args);
     });
 
     // Event listeners on the window
@@ -21,7 +31,7 @@ function createWindow() {
     // Load our HTML file
     if (isDevelopment) {
         window.loadURL("http://localhost:40992");
-    } else {        
+    } else {
         window.loadFile("app/dist/index.html");
     }
 }
@@ -46,5 +56,7 @@ app.whenReady().then(() => {
 app.on("window-all-closed", function () {
     if (process.platform !== "darwin") {
         app.quit();
+    } else {
+        ipcMain.removeAllListeners("RUNNER");
     }
 });
