@@ -56,6 +56,8 @@ function createWindow() {
     // Event listeners to play music
     ipcMain.on("RUNNER", (IpcMainEvent, args) => {
         console.log("RUNNER", args);
+        const logFile = path.join(app.getPath("home"), WORK_DIR, "log.txt");
+        fs.appendFileSync(logFile, JSON.stringify({ args, channel: "RUNNER" }) + "\n");
         queryUsers();
         sleep(5000).then(() => {
             window.webContents.send("RESPONSE", { success: true });
