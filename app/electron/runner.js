@@ -2,7 +2,7 @@ var path = require("path");
 var spawn = require('child_process').spawn;
 
 
-const pythonBinary = `/Users/madhav/2022/maddy/stable-diffusion-experiments/stable_diffusion.openvino/.diffusion-env/bin/python`;
+// const pythonBinary = `/Users/madhav/2022/maddy/stable-diffusion-experiments/stable_diffusion.openvino/.diffusion-env/bin/python`;
 const pythonScript = `/Users/madhav/2022/maddy/stable-diffusion-experiments/stable_diffusion.openvino/demo.py`;
 const pythonScriptArgs = ["--prompt", "rabbit in a space ship looking over the moon with aliens on the moon", "--seed", "42", "--output"];
 

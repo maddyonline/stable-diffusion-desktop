@@ -1,7 +1,8 @@
 const {
     app,
     BrowserWindow,
-    ipcMain
+    ipcMain,
+    dialog
 } = require("electron");
 const path = require("path");
 const { queryUsers, createUser, createSettings, fetchSettings } = require("./db.js");
@@ -10,6 +11,22 @@ const fs = require("fs");
 
 
 const { WORK_DIR, DB_NAME } = require("./constants.js");
+
+
+async function handleFileOpen() {
+    const { canceled, filePaths } = await dialog.showOpenDialog()
+    if (canceled) {
+        return
+    } else {
+        return filePaths[0]
+    }
+}
+
+async function handleFetchSettings() {
+    const settings = await fetchSettings();
+    console.log(settings);
+    return JSON.stringify(settings);
+}
 
 function createWorkDir() {
     // Get user's home directory
@@ -43,8 +60,8 @@ function sleep(ms) {
 function createWindow() {
     // Create a new window
     const window = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1200,
+        height: 900,
         show: false,
         webPreferences: {
             devTools: true,
@@ -54,6 +71,7 @@ function createWindow() {
     createSettings();
     // createUser();
     createWorkDir();
+    ipcMain.handle('dialog:openFile', handleFetchSettings)
     // Event listeners to play music
     ipcMain.on("RUNNER", (IpcMainEvent, args) => {
         console.log("RUNNER", args);
