@@ -6,6 +6,34 @@ const {
 const path = require("path");
 const { queryUsers, createUser } = require("./db.js");
 
+const fs = require("fs");
+
+
+const { WORK_DIR, DB_NAME } = require("./constants.js");
+
+function createWorkDir() {
+    // Get user's home directory
+    const homeDir = app.getPath("home");
+    // Create a directory for the app
+    const workDir = path.join(homeDir, WORK_DIR);
+    // Check if the directory exists
+    if (!fs.existsSync(workDir)) {
+        // If not, create it
+        fs.mkdirSync(workDir);
+    }
+    // Create a sqlite database file if it doesn't exist
+    const dbFile = path.join(workDir, DB_NAME);
+    if (!fs.existsSync(dbFile)) {
+        fs.closeSync(fs.openSync(dbFile, "w"));
+    }
+    // Create a log file if it doesn't exist
+    const logFile = path.join(workDir, "log.txt");
+    if (!fs.existsSync(logFile)) {
+        fs.closeSync(fs.openSync(logFile, "w"));
+    }
+
+}
+
 const isDevelopment = process.env.NODE_ENV === "development";
 
 function sleep(ms) {
@@ -24,6 +52,7 @@ function createWindow() {
         }
     });
     createUser();
+    createWorkDir();
     // Event listeners to play music
     ipcMain.on("RUNNER", (IpcMainEvent, args) => {
         console.log("RUNNER", args);

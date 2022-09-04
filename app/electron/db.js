@@ -1,6 +1,18 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
+const { WORK_DIR, DB_NAME } = require("./constants.js");
+const {
+    app,
+} = require("electron");
+const path = require("path");
 
-const sequelize = new Sequelize('sqlite::memory:');
+
+const db = path.join(app.getPath("home"), WORK_DIR, DB_NAME);
+
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: db
+});
+
 const User = sequelize.define('User', {
     username: DataTypes.STRING,
     birthday: DataTypes.DATE,
