@@ -6,6 +6,10 @@ const {
 const path = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function createWindow() {
     // Create a new window
     const window = new BrowserWindow({
@@ -20,6 +24,9 @@ function createWindow() {
     // Event listeners to play music
     ipcMain.on("RUNNER", (IpcMainEvent, args) => {
         console.log("RUNNER", args);
+        sleep(5000).then(() => {
+            window.webContents.send("RESPONSE", { success: true });
+        });
     });
 
     // Event listeners on the window

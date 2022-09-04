@@ -6,4 +6,9 @@ contextBridge.exposeInMainWorld("api", {
             name
         });
     },
+    listenFromMain: function (callback) {
+        ipcRenderer.on("RESPONSE", (event, args) => {
+            callback(args);
+        });
+    }
 });
