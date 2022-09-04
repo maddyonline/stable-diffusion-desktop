@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("api", {
-    openFile: () => ipcRenderer.invoke('dialog:openFile'),
+    fetchPrompts: () => ipcRenderer.invoke('db:fetchPrompts'),
     run: function (name) {
         ipcRenderer.send("RUNNER", {
             name

@@ -150,9 +150,9 @@ const api = {
 
 
 async function main() {
-    testPrompts();
-    // await api.createSettings();
-    // await api.fetchSettings();
+    await testPrompts();
+    await api.createSettings();
+    await api.fetchSettings();
 }
 
 main();

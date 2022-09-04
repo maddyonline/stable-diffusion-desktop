@@ -5,28 +5,13 @@ const {
     dialog
 } = require("electron");
 const path = require("path");
-const { queryUsers, createUser, createSettings, fetchSettings } = require("./db.js");
+const { fetchPrompts } = require("./db.js");
 
 const fs = require("fs");
 
 
 const { WORK_DIR, DB_NAME } = require("./constants.js");
 
-
-async function handleFileOpen() {
-    const { canceled, filePaths } = await dialog.showOpenDialog()
-    if (canceled) {
-        return
-    } else {
-        return filePaths[0]
-    }
-}
-
-async function handleFetchSettings() {
-    const settings = await fetchSettings();
-    console.log(settings);
-    return JSON.stringify(settings);
-}
 
 function createWorkDir() {
     // Get user's home directory
@@ -68,17 +53,15 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js")
         }
     });
-    createSettings();
-    // createUser();
     createWorkDir();
-    ipcMain.handle('dialog:openFile', handleFetchSettings)
-    // Event listeners to play music
+    ipcMain.handle('db:fetchPrompts', fetchPrompts);
+
+
+
     ipcMain.on("RUNNER", (IpcMainEvent, args) => {
         console.log("RUNNER", args);
         const logFile = path.join(app.getPath("home"), WORK_DIR, "log.txt");
         fs.appendFileSync(logFile, JSON.stringify({ args, channel: "RUNNER" }) + "\n");
-        // queryUsers();
-        fetchSettings();
         sleep(5000).then(() => {
             window.webContents.send("RESPONSE", { success: true });
         });

@@ -13,19 +13,23 @@ const container = document.getElementById("target");
 const root = createRoot(container);
 
 const TestApp = () => {
-  const [filePath, setFilePath] = React.useState("");
+  const [prompts, setPrompts] = React.useState([]);
   return (
     <>
-      <h1>{`file path : ${filePath}`}</h1>
       <button
         onClick={async () => {
-          const filePath = await window.api.openFile();
-          console.log(filePath);
-          setFilePath(filePath);
+          const prompts = await window.api.fetchPrompts();
+          console.log(prompts);
+          setPrompts(prompts);
         }}
       >
-        Open a File
+        Fetch Prompts
       </button>
+      <div>
+        {prompts.map((prompt, index) => (
+          <div key={index}>{JSON.stringify(prompt)}</div>
+        ))}
+      </div>
     </>
   );
 };

@@ -6,15 +6,13 @@ const {
 const path = require("path");
 
 
-const db = path.join(app.getPath("home"), WORK_DIR, DB_NAME);
+// const db = path.join(app.getPath("home"), WORK_DIR, DB_NAME);
+const db = `/Users/madhav/2022/maddy/stable-diffusion-experiments/stable-diffusion-desktop/scripts/local.db`;
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: db
 });
-
-
-
 
 // Define a model for storing global settings
 
@@ -32,60 +30,38 @@ const Settings = sequelize.define('Settings', {
 });
 
 
+// Define a model for storing user prompts with the following columns: [id, prompt, seed, key]
 
-
-const User = sequelize.define('User', {
-    username: DataTypes.STRING,
-    birthday: DataTypes.DATE,
+const Prompts = sequelize.define('Prompts', {
+    // Model attributes are defined here
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    prompt: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    seed: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null
+    },
+    key: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: ""
+    }
 });
 
 
+
 module.exports = {
-    queryUsers: async () => {
-        await sequelize.sync();
-        const users = await User.findAll();
-        console.log(users);
-    },
-    createSettings: async () => {
-        await sequelize.sync();
-        try {
-            // create the following key-value pairs if they don't exist
-            // theme: "dark"
-            // language: "en"
-            const kvs = [["theme", "dark"], ["language", "en"]];
-            for (const [key, value] of kvs) {
-                await Settings.findOrCreate({
-                    where: {
-                        key
-                    },
-                    defaults: {
-                        value
-                    }
-                });
-            }
-
-        } catch (error) {
-            console.log(error);
-        }
-
-    },
-    fetchSettings: async () => {
-        await sequelize.sync();
-        const settings = await Settings.findAll();
-        // print key value pairs
-        const settingsMap = new Map();
-        for (const setting of settings) {
-            console.log(setting.key, setting.value);
-            settingsMap.set(setting.key, setting.value);
-        }
-        return settingsMap;
-    },
-    createUser: async () => {
-        await sequelize.sync();
-        const jane = await User.create({
-            username: 'janedoe',
-            birthday: new Date(1980, 6, 20)
-        });
-        console.log(jane.toJSON());
+    fetchPrompts: async () => {
+        const prompts = await Prompts.findAll();
+        // convert to an array of objects
+        return prompts.map(prompt => prompt.dataValues);
     }
 }
