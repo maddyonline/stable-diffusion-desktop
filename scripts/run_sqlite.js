@@ -1,19 +1,15 @@
-const { Sequelize, Model, DataTypes } = require('sequelize');
-const { WORK_DIR, DB_NAME } = require("./constants.js");
-const {
-    app,
-} = require("electron");
+const { Sequelize, DataTypes } = require('sequelize');
 const path = require("path");
 
-
-const db = path.join(app.getPath("home"), WORK_DIR, DB_NAME);
+// define local.db in current directory
+// get local directory
+const db = path.join(__dirname, "local.db");
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: db
+    storage: db,
+    logging: false
 });
-
-
 
 
 // Define a model for storing global settings
@@ -32,20 +28,8 @@ const Settings = sequelize.define('Settings', {
 });
 
 
+const api = {
 
-
-const User = sequelize.define('User', {
-    username: DataTypes.STRING,
-    birthday: DataTypes.DATE,
-});
-
-
-module.exports = {
-    queryUsers: async () => {
-        await sequelize.sync();
-        const users = await User.findAll();
-        console.log(users);
-    },
     createSettings: async () => {
         await sequelize.sync();
         try {
@@ -80,12 +64,14 @@ module.exports = {
         }
         return settingsMap;
     },
-    createUser: async () => {
-        await sequelize.sync();
-        const jane = await User.create({
-            username: 'janedoe',
-            birthday: new Date(1980, 6, 20)
-        });
-        console.log(jane.toJSON());
-    }
+
 }
+
+
+
+async function main() {
+    await api.createSettings();
+    await api.fetchSettings();
+}
+
+main();

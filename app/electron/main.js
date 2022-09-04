@@ -4,7 +4,7 @@ const {
     ipcMain
 } = require("electron");
 const path = require("path");
-const { queryUsers, createUser } = require("./db.js");
+const { queryUsers, createUser, createSettings, fetchSettings } = require("./db.js");
 
 const fs = require("fs");
 
@@ -51,14 +51,16 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js")
         }
     });
-    createUser();
+    createSettings();
+    // createUser();
     createWorkDir();
     // Event listeners to play music
     ipcMain.on("RUNNER", (IpcMainEvent, args) => {
         console.log("RUNNER", args);
         const logFile = path.join(app.getPath("home"), WORK_DIR, "log.txt");
         fs.appendFileSync(logFile, JSON.stringify({ args, channel: "RUNNER" }) + "\n");
-        queryUsers();
+        // queryUsers();
+        fetchSettings();
         sleep(5000).then(() => {
             window.webContents.send("RESPONSE", { success: true });
         });

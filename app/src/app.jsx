@@ -33,7 +33,7 @@ import { Outlet, Link } from "react-router-dom";
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Expenses", href: "expenses", icon: UsersIcon, current: false },
+  { name: "Settings", href: "settings", icon: UsersIcon, current: false },
   { name: "Invoices", href: "invoices", icon: FolderIcon, current: false },
   { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
   { name: "Documents", href: "#", icon: InboxIcon, current: false },
