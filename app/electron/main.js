@@ -4,6 +4,8 @@ const {
     ipcMain
 } = require("electron");
 const path = require("path");
+const { queryUsers, createUser } = require("./db.js");
+
 const isDevelopment = process.env.NODE_ENV === "development";
 
 function sleep(ms) {
@@ -21,9 +23,11 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js")
         }
     });
+    createUser();
     // Event listeners to play music
     ipcMain.on("RUNNER", (IpcMainEvent, args) => {
         console.log("RUNNER", args);
+        queryUsers();
         sleep(5000).then(() => {
             window.webContents.send("RESPONSE", { success: true });
         });
