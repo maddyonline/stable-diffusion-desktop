@@ -3,16 +3,23 @@ import React from "react";
 import { DEFAULT_PROMPT } from "./utils";
 import Gallery from "./gallery";
 
-const ProgressBar = ({ progress, max }) => {
+const ProgressBar = ({ progress, progressMax, prompt, seed }) => {
   return (
-    <progress value={progress} max={max}>
-      {" "}
-      {progress}{" "}
-    </progress>
+    <div>
+      <p>{`${prompt} (seed ${seed})`}</p>
+      <progress value={progress} max={progressMax}>
+        {" "}
+        {progress}{" "}
+      </progress>{" "}
+      {progress} / {progressMax}
+    </div>
   );
 };
 
 export default function PromptScreen() {
+  const [seed, setSeed] = React.useState(42);
+  const [prompt, setPrompt] = React.useState(DEFAULT_PROMPT);
+  const [progressMax, setProgressMax] = React.useState(5);
   const [running, setRunning] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [toggle, setToggle] = React.useState(false);
@@ -27,19 +34,24 @@ export default function PromptScreen() {
     return window.api.listenForProgress((e) => {
       console.log("received progress", e);
       setProgress(e.progress.iterations);
+      if (e.progress.iterations >= progressMax) {
+        setRunning(false);
+        setProgress(0);
+      }
     });
-  }, [running]);
+  }, [running, progressMax, setProgress, setRunning]);
 
-  React.useEffect(() => {
-    if (running && progress >= 4) {
-      setRunning(false);
-      setProgress(0);
-    }
-  }, [running, progress]);
   return (
     <>
       <div className="mx-auto max-w-md sm:max-w-3xl">
-        {running && <ProgressBar progress={progress} max={4} />}
+        {running && (
+          <ProgressBar
+            prompt={prompt}
+            seed={seed}
+            progress={progress}
+            progressMax={progressMax}
+          />
+        )}
         <form
           className="mt-6 sm:flex sm:items-center"
           action="#"
@@ -55,6 +67,9 @@ export default function PromptScreen() {
             await window.api.createPrompt({ prompt, seed, iterations, key });
             window.api.run({ prompt, seed, iterations, key });
             setRunning(true);
+            setSeed(seed);
+            setPrompt(prompt);
+            setProgressMax(iterations);
 
             const reset = (ref) => {
               if (ref.current) {
@@ -101,26 +116,28 @@ export default function PromptScreen() {
           </div>
 
           <div className="mt-3 sm:mt-0 sm:ml-4 sm:flex-shrink-0">
-            <button
-              type="submit"
-              className="block w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              {!running && "Submit"}
-              {running && (
-                <svg
-                  className="animate-spin h-5 w-5 mr-3 bg-black"
-                  viewBox="0 0 24 24"
-                ></svg>
-              )}
-            </button>
+            {!running && (
+              <button
+                type="submit"
+                className="block w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Submit
+              </button>
+            )}
+            {running && (
+              <svg
+                className="animate-spin h-5 w-5 mr-3 bg-black"
+                viewBox="0 0 24 24"
+              ></svg>
+            )}
           </div>
           <div className="mt-3 sm:mt-0 sm:ml-4 sm:flex-shrink-0">
-            <button
+            <div
               onClick={() => setToggle(!toggle)}
               className="block w-full rounded-md border border-transparent bg-gray-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               {toggle ? "-" : "+"}
-            </button>
+            </div>
           </div>
         </form>
       </div>
