@@ -5,6 +5,7 @@ const path = require("path");
 // get local directory
 const db = path.join(__dirname, "local.db");
 
+
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: db,
@@ -44,33 +45,37 @@ const Prompts = sequelize.define('Prompts', {
     },
     seed: {
         type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: null
+        allowNull: false,
+        defaultValue: 42
+    },
+    iterations: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 2
     },
     key: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: ""
+        defaultValue: "default"
     }
 });
 
 
 const promptsFixture = [
-    ["A painting of donald trump in mona lisa style", 1, "trump"],
-    ["A painting of a cat in mona lisa style", 2, "cat"],
-    ["A painting of a dog in mona lisa style", 3, "dog"],
-    ["A painting of a bird in mona lisa style", 4, "bird"],
-    ["A painting of a fish in mona lisa style", 5, "fish"],
+    ["pikachu as a realistic fantasy knight, closeup portrait art", "pikachu"],
+    ["Baroque oil painting rick sanchez from rick and morty illustration concept art", "rick"],
+    ["Winnie the pooh practicing karate at the shaolin temple", "winnie"],
+    ["Super mario by greg rutkowski, sung choi, mitchell mohrhauser", "mario"],
+    ["A painting of trump in mona lisa style", "trump"],
 ];
 
 async function seedPrompts() {
     await sequelize.sync();
-    for (const [prompt, seed, key] of promptsFixture) {
+    for (const [prompt, key] of promptsFixture) {
         // auto assign id
         await Prompts.findOrCreate({
             where: {
                 prompt,
-                seed,
                 key
             }
         });

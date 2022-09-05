@@ -3,8 +3,10 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("api", {
     // invoke functions (synchronous)
     fetchPrompts: () => ipcRenderer.invoke('db:fetchPrompts'),
+    fetchSettings: () => ipcRenderer.invoke('db:fetchSettings'),
     createPrompt: ({ prompt, seed, key }) => ipcRenderer.invoke('db:createPrompt', { prompt, seed, key }),
     fetchImages: () => ipcRenderer.invoke('fs:fetchImages'),
+    openFolder: () => ipcRenderer.invoke('sh:openFolder'),
     // fire and forget functions (Renderer -> Main)
     run: (name) => ipcRenderer.send('run-channel', name),
     // listen for events (Main -> Renderer)
@@ -15,5 +17,5 @@ contextBridge.exposeInMainWorld("api", {
             console.log("removing listener")
             ipcRenderer.removeListener("progress-channel", handler);
         }
-    }, 
+    },
 });

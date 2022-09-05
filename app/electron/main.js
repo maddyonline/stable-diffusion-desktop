@@ -2,46 +2,45 @@ const {
     app,
     BrowserWindow,
     ipcMain,
-    dialog
+    shell
 } = require("electron");
 const path = require("path");
-const { fetchPrompts, createPrompt } = require("./db.js");
+const { fetchPrompts, fetchSettings, createPrompt, seedPrompts, seedSettings } = require("./db.js");
 
 const fs = require("fs");
 
-
-const { WORK_DIR, DB_NAME } = require("./constants.js");
+const { getWorkDir, getDBPath, getLogPath } = require("./utils.js");
 const { runStableDiffusion } = require("./commands.js");
 
 
+
+
 function createWorkDir() {
-    // Get user's home directory
-    const homeDir = app.getPath("home");
-    // Create a directory for the app
-    const workDir = path.join(homeDir, WORK_DIR);
+    const workDir = getWorkDir();
     // Check if the directory exists
     if (!fs.existsSync(workDir)) {
         // If not, create it
         fs.mkdirSync(workDir);
     }
     // Create a sqlite database file if it doesn't exist
-    const dbFile = path.join(workDir, DB_NAME);
+    const dbFile = getDBPath();
     if (!fs.existsSync(dbFile)) {
         fs.closeSync(fs.openSync(dbFile, "w"));
     }
     // Create a log file if it doesn't exist
-    const logFile = path.join(workDir, "log.txt");
+    const logFile = getLogPath();
     if (!fs.existsSync(logFile)) {
         fs.closeSync(fs.openSync(logFile, "w"));
     }
-
+    seedPrompts();
+    seedSettings();
 }
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
 async function fetchImages() {
-    const homeDir = app.getPath("home");
-    const workDir = path.join(homeDir, WORK_DIR);
+
+    const workDir = getWorkDir();
     // return top 10 images in the work directory based on their modification time
     const images = await fs.promises.readdir(workDir, { withFileTypes: true });
     const imageFiles = images.filter((image) => image.isFile()).map((image) => image.name);
@@ -76,16 +75,16 @@ function createWindow() {
     });
     createWorkDir();
     ipcMain.handle('db:fetchPrompts', async () => await fetchPrompts());
+    ipcMain.handle('db:fetchSettings', async () => await fetchSettings());
     ipcMain.handle('db:createPrompt', async (_event, payload) => await createPrompt(payload));
     ipcMain.handle('fs:fetchImages', async () => await fetchImages());
+    ipcMain.handle('sh:openFolder', () => shell.openPath(app.getPath("home")));
 
 
 
-    ipcMain.on("run-channel", (IpcMainEvent, args) => {
+    ipcMain.on("run-channel", (_event, args) => {
         console.log("run-channel", args);
-        const logFile = path.join(app.getPath("home"), WORK_DIR, "log.txt");
-        fs.appendFileSync(logFile, JSON.stringify({ args, channel: "run-channel" }) + "\n");
-        runStableDiffusion((progress) => {
+        runStableDiffusion(args, (progress) => {
             window.webContents.send("progress-channel", { args: args, progress: progress });
         });
     });

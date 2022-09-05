@@ -1,13 +1,8 @@
-const { Sequelize, Model, DataTypes } = require('sequelize');
-const { WORK_DIR, DB_NAME } = require("./constants.js");
-const {
-    app,
-} = require("electron");
-const path = require("path");
+const { Sequelize, DataTypes } = require('sequelize');
+const { getDBPath, getPythonPath, getPythonScript } = require("./utils.js");
 
 
-// const db = path.join(app.getPath("home"), WORK_DIR, DB_NAME);
-const db = `/Users/madhav/2022/maddy/stable-diffusion-experiments/stable-diffusion-desktop/scripts/local.db`;
+const db = getDBPath();
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
@@ -57,20 +52,75 @@ const Prompts = sequelize.define('Prompts', {
 });
 
 
+const promptsFixture = [
+    ["pikachu as a realistic fantasy knight, closeup portrait art", "pikachu"],
+    ["Baroque oil painting rick sanchez from rick and morty illustration concept art", "rick"],
+    ["Winnie the pooh practicing karate at the shaolin temple", "winnie"],
+    ["Super mario by greg rutkowski, sung choi, mitchell mohrhauser", "mario"],
+    ["A painting of trump in mona lisa style", "trump"],
+];
+
+async function seedPrompts() {
+    await sequelize.sync();
+    for (const [prompt, key] of promptsFixture) {
+        // auto assign id
+        await Prompts.findOrCreate({
+            where: {
+                prompt,
+                key
+            }
+        });
+    }
+}
+
+
+
+const settingsFixture = [
+    ["pythonPath", getPythonPath()],
+    ["pythonScript", getPythonScript()],
+];
+
+async function seedSettings() {
+    await sequelize.sync();
+    // if key does not exist, create it with the default value above
+    for (const [key, value] of settingsFixture) {
+        await Settings.findOrCreate({
+            where: {
+                key
+            },
+            defaults: {
+                value
+            }
+        });
+    }
+}
 
 module.exports = {
     fetchPrompts: async () => {
-        const prompts = await Prompts.findAll();
-        // convert to an array of objects
+        // fetch prompts reverse sorted by creation time
+        const prompts = await Prompts.findAll({
+            order: [
+                ['id', 'DESC']
+            ]
+        });
         return prompts.map(prompt => prompt.dataValues);
     },
-    createPrompt: async (arg) => {
-        console.log(arg)
-        const { prompt, seed, key } = arg;
-        await Prompts.create({
-            prompt,
-            seed,
-            key
+    createPrompt: async (payload) => {
+        console.log(`creating with following payload`, payload);
+        await Prompts.create(payload);
+    },
+    fetchSettings: async () => {
+        const settings = await Settings.findAll();
+        return settings.map(setting => setting.dataValues);
+    },
+    updateSettings: async (payload) => {
+        console.log(`updating with following payload`, payload);
+        await Settings.update(payload, {
+            where: {
+                key: payload.key
+            }
         });
-    }
+    },
+    seedPrompts,
+    seedSettings,
 }

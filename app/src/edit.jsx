@@ -65,9 +65,7 @@ export default function EditModal({ onDone }) {
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Are you sure you want to deactivate your account? All of
-                        your data will be permanently removed from our servers
-                        forever. This action cannot be undone.
+                       Soon you will be able to edit settings here. 
                       </p>
                     </div>
                   </div>
@@ -81,7 +79,7 @@ export default function EditModal({ onDone }) {
                       onDone();
                     }}
                   >
-                    Deactivate
+                    Update
                   </button>
                   <button
                     type="button"

@@ -1,0 +1,1 @@
+export const DEFAULT_PROMPT = "Trump on a high horse with lil Nas X singing in the background"

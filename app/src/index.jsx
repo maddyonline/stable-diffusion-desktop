@@ -12,39 +12,6 @@ import History from "./history";
 const container = document.getElementById("target");
 const root = createRoot(container);
 
-const ProgressBar = ({ progress, max }) => {
-  return (
-    <progress value={progress} max={max}>
-      {" "}
-      {progress}{" "}
-    </progress>
-  );
-};
-const TestApp = () => {
-  const [count, setCount] = React.useState(0);
-  const [progress, setProgress] = React.useState(0);
-  React.useEffect(() => {
-    return window.api.listenForProgress((e) => {
-      console.log("received progress", e);
-      setProgress(e.progress.iterations);
-    });
-  }, []);
-  return (
-    <>
-      <h1>{count}</h1>
-      <ProgressBar progress={progress} max={5} />
-      <button
-        onClick={() => {
-          window.api.run(`hello-${count}`);
-          setCount(count + 1);
-        }}
-      >
-        Run
-      </button>
-    </>
-  );
-};
-
 root.render(
   <BrowserRouter>
     <Routes>
@@ -52,7 +19,7 @@ root.render(
         <Route index element={<Prompt />} />
         <Route path="prompt" element={<Prompt />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="test" element={<TestApp />} />
+        <Route path="test" element={<div>Test</div>} />
         <Route path="history" element={<History />} />
       </Route>
     </Routes>
