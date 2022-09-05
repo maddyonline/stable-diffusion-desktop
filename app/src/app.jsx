@@ -30,6 +30,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Outlet, Link } from "react-router-dom";
+import Gallery from "./gallery";
 
 const navigation = [
   { name: "Prompt", href: "prompt", icon: HomeIcon, current: true },
@@ -213,6 +214,7 @@ export default function App() {
                 {/* Replace with your content */}
                 <Outlet />
                 <div className="py-4">
+                  <Gallery />
                   <div className="h-96 rounded-lg border-4 border-dashed border-gray-200" />
                 </div>
                 {/* /End replace */}

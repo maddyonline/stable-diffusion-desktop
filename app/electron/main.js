@@ -65,7 +65,7 @@ function createWindow() {
         const logFile = path.join(app.getPath("home"), WORK_DIR, "log.txt");
         fs.appendFileSync(logFile, JSON.stringify({ args, channel: "run-channel" }) + "\n");
         runStableDiffusion((progress) => {
-            window.webContents.send("progress-channel", `${args}: ${JSON.stringify(progress)}`);
+            window.webContents.send("progress-channel", { args: args, progress: progress });
         });
     });
 

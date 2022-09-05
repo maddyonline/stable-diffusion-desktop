@@ -7,10 +7,13 @@ async function runPythonScript(reportProgress) {
     const outputDir = "/Users/madhav/diffusion-app";
     const prompt = "rabbit in a space ship looking over the moon with aliens on the moon";
     const seed = "42";
+    const iter = 5;
 
 
-    const pythonScriptArgs = ["--prompt", prompt, "--seed", seed, "--output"];
-    const outputFilename = `output-${Date.now()}.png`;
+    const pythonScriptArgs = [
+        "--num-inference-steps", iter,
+        "--prompt", prompt, "--seed", seed, "--output"];
+    const outputFilename = `output-${iter}-${seed}-${Date.now()}.png`;
     const outputFilepath = path.join(outputDir, outputFilename);
     pythonScriptArgs.push(outputFilepath);
 

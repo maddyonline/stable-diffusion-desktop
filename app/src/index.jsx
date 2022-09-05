@@ -12,22 +12,9 @@ import History from "./history";
 const container = document.getElementById("target");
 const root = createRoot(container);
 
-const ProgressBar = () => {
-  const [progress, setProgress] = React.useState(0);
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((progress) => {
-        if (progress >= 100) {
-          clearInterval(interval);
-          return 0;
-        }
-        return progress + 1;
-      });
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
+const ProgressBar = ({ progress, max }) => {
   return (
-    <progress value={progress} max="100">
+    <progress value={progress} max={max}>
       {" "}
       {progress}{" "}
     </progress>
@@ -35,15 +22,17 @@ const ProgressBar = () => {
 };
 const TestApp = () => {
   const [count, setCount] = React.useState(0);
+  const [progress, setProgress] = React.useState(0);
   React.useEffect(() => {
-    return window.api.listenForProgress((e) =>
-      console.log(`progress received: ${e}`)
-    );
+    return window.api.listenForProgress((e) => {
+      console.log("received progress", e);
+      setProgress(e.progress.iterations);
+    });
   }, []);
   return (
     <>
       <h1>{count}</h1>
-      <ProgressBar />
+      <ProgressBar progress={progress} max={5} />
       <button
         onClick={() => {
           window.api.run(`hello-${count}`);
