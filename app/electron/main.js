@@ -39,8 +39,28 @@ function createWorkDir() {
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+async function fetchImages() {
+    const homeDir = app.getPath("home");
+    const workDir = path.join(homeDir, WORK_DIR);
+    // return top 10 images in the work directory based on their modification time
+    const images = await fs.promises.readdir(workDir, { withFileTypes: true });
+    const imageFiles = images.filter((image) => image.isFile()).map((image) => image.name);
+    // keep only png files
+    const pngFiles = imageFiles.filter((image) => image.endsWith(".png"));
+    // sort by modification time
+    const sortedFiles = pngFiles.sort((a, b) => {
+        const aTime = fs.statSync(path.join(workDir, a)).mtime;
+        const bTime = fs.statSync(path.join(workDir, b)).mtime;
+        return bTime - aTime;
+    });
+    // keep top 5 files
+    const topFiles = sortedFiles.slice(0, 5);
+    // return base64 encoded images
+    const base64Images = topFiles.map((image) => {
+        const imageFile = fs.readFileSync(path.join(workDir, image));
+        return imageFile.toString("base64");
+    });
+    return base64Images;
 }
 
 function createWindow() {
@@ -57,6 +77,7 @@ function createWindow() {
     createWorkDir();
     ipcMain.handle('db:fetchPrompts', async () => await fetchPrompts());
     ipcMain.handle('db:createPrompt', async (_event, payload) => await createPrompt(payload));
+    ipcMain.handle('fs:fetchImages', async () => await fetchImages());
 
 
 
