@@ -13,23 +13,23 @@ const container = document.getElementById("target");
 const root = createRoot(container);
 
 const TestApp = () => {
-  const [prompts, setPrompts] = React.useState([]);
+  const [count, setCount] = React.useState(0);
+  React.useEffect(() => {
+    return window.api.listenForProgress((e) =>
+      console.log(`progress received: ${e}`)
+    );
+  }, []);
   return (
     <>
+      <h1>{count}</h1>
       <button
-        onClick={async () => {
-          const prompts = await window.api.fetchPrompts();
-          console.log(prompts);
-          setPrompts(prompts);
+        onClick={() => {
+          window.api.run(`hello-${count}`);
+          setCount(count + 1);
         }}
       >
-        Fetch Prompts
+        Run
       </button>
-      <div>
-        {prompts.map((prompt, index) => (
-          <div key={index}>{JSON.stringify(prompt)}</div>
-        ))}
-      </div>
     </>
   );
 };

@@ -59,13 +59,21 @@ function createWindow() {
 
 
 
-    ipcMain.on("RUNNER", (IpcMainEvent, args) => {
-        console.log("RUNNER", args);
+    ipcMain.on("run-channel", (IpcMainEvent, args) => {
+        console.log("run-channel", args);
         const logFile = path.join(app.getPath("home"), WORK_DIR, "log.txt");
-        fs.appendFileSync(logFile, JSON.stringify({ args, channel: "RUNNER" }) + "\n");
-        sleep(5000).then(() => {
-            window.webContents.send("RESPONSE", { success: true });
-        });
+        fs.appendFileSync(logFile, JSON.stringify({ args, channel: "run-channel" }) + "\n");
+        // send progress to renderer every 2 seconds
+        let i = 0;
+        const interval = setInterval(() => {
+            window.webContents.send("progress-channel", `${args}: ${i}`);
+            i++;
+        }, 1000);
+        // stop sending progress after 10 seconds
+        setTimeout(() => {
+            clearInterval(interval);
+            window.webContents.send("progress-channel", "done");
+        }, 30000);
     });
 
     // Event listeners on the window
