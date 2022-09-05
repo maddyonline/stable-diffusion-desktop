@@ -5,7 +5,7 @@ const {
     dialog
 } = require("electron");
 const path = require("path");
-const { fetchPrompts } = require("./db.js");
+const { fetchPrompts, createPrompt } = require("./db.js");
 
 const fs = require("fs");
 
@@ -54,7 +54,8 @@ function createWindow() {
         }
     });
     createWorkDir();
-    ipcMain.handle('db:fetchPrompts', fetchPrompts);
+    ipcMain.handle('db:fetchPrompts', async () => await fetchPrompts());
+    ipcMain.handle('db:createPrompt', async (_event, payload) => await createPrompt(payload));
 
 
 

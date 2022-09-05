@@ -63,5 +63,14 @@ module.exports = {
         const prompts = await Prompts.findAll();
         // convert to an array of objects
         return prompts.map(prompt => prompt.dataValues);
+    },
+    createPrompt: async (arg) => {
+        console.log(arg)
+        const { prompt, seed, key } = arg;
+        await Prompts.create({
+            prompt,
+            seed,
+            key
+        });
     }
 }

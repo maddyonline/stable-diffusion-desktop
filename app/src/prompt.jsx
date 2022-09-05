@@ -88,11 +88,12 @@ export default function PromptScreen() {
         <form
           className="mt-6 sm:flex sm:items-center"
           action="#"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             const prompt = promptRef.current.value;
             const seed = seedRef.current.value;
             console.log(prompt, seed);
+            await window.api.createPrompt({ prompt, seed, key: `default` });
             promptRef.current.value = "";
             seedRef.current.value = "";
           }}
