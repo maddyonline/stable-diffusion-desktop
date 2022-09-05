@@ -11,6 +11,7 @@ const fs = require("fs");
 
 
 const { WORK_DIR, DB_NAME } = require("./constants.js");
+const { runStableDiffusion } = require("./commands.js");
 
 
 function createWorkDir() {
@@ -63,17 +64,9 @@ function createWindow() {
         console.log("run-channel", args);
         const logFile = path.join(app.getPath("home"), WORK_DIR, "log.txt");
         fs.appendFileSync(logFile, JSON.stringify({ args, channel: "run-channel" }) + "\n");
-        // send progress to renderer every 2 seconds
-        let i = 0;
-        const interval = setInterval(() => {
-            window.webContents.send("progress-channel", `${args}: ${i}`);
-            i++;
-        }, 1000);
-        // stop sending progress after 10 seconds
-        setTimeout(() => {
-            clearInterval(interval);
-            window.webContents.send("progress-channel", "done");
-        }, 30000);
+        runStableDiffusion((progress) => {
+            window.webContents.send("progress-channel", `${args}: ${JSON.stringify(progress)}`);
+        });
     });
 
     // Event listeners on the window
