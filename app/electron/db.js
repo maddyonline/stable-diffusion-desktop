@@ -113,6 +113,15 @@ module.exports = {
         const settings = await Settings.findAll();
         return settings.map(setting => setting.dataValues);
     },
+    fetchSettingsValue: async (key) => {
+        // Since key is the primary key, we return the unique value corresponding to the key
+        const setting = await Settings.findOne({
+            where: {
+                key
+            }
+        });
+        return setting.dataValues.value;
+    },
     updateSettings: async (payload) => {
         console.log(`updating with following payload`, payload);
         await Settings.update(payload, {

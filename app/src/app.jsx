@@ -19,7 +19,7 @@ import Gallery from "./gallery";
 const navigation = [
   { name: "Prompt", href: "prompt", icon: HomeIcon, current: true },
   { name: "Settings", href: "settings", icon: UsersIcon, current: false },
-  { name: "Test", href: "test", icon: FolderIcon, current: false },
+  { name: "Gallery", href: "gallery", icon: FolderIcon, current: false },
   { name: "History", href: "history", icon: CalendarIcon, current: false },
 ];
 
@@ -198,10 +198,6 @@ export default function App() {
               <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
                 {/* Replace with your content */}
                 <Outlet />
-                <div className="py-4">
-                  <Gallery />
-                  <div className="h-96 rounded-lg border-4 border-dashed border-gray-200" />
-                </div>
                 {/* /End replace */}
               </div>
             </div>

@@ -1,9 +1,8 @@
 var path = require("path");
 var spawn = require('child_process').spawn;
 
-async function runStableDiffusion({ prompt, seed, iterations, key }, reportProgress) {
-    const pythonBinary = `/Users/madhav/2022/maddy/stable-diffusion-experiments/stable_diffusion.openvino/.diffusion-env/bin/python`;
-    const pythonScript = `/Users/madhav/2022/maddy/stable-diffusion-experiments/stable_diffusion.openvino/demo.py`;
+async function runStableDiffusion(pythonPath, pythonScript, { prompt, seed, iterations, key }, reportProgress) {
+
     const outputDir = "/Users/madhav/diffusion-app";
     const pythonScriptArgs = [
         "--num-inference-steps", iterations,
@@ -13,7 +12,7 @@ async function runStableDiffusion({ prompt, seed, iterations, key }, reportProgr
     pythonScriptArgs.push(outputFilepath);
 
     console.log("running python script with args", pythonScriptArgs);
-    const cmd = spawn(pythonBinary, [pythonScript, ...pythonScriptArgs]);
+    const cmd = spawn(pythonPath, [pythonScript, ...pythonScriptArgs]);
     cmd.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');
         console.log(data.toString());

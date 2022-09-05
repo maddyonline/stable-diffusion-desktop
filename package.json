@@ -1,7 +1,7 @@
 {
-  "name": "simple-electron-template",
+  "name": "stable-diffusion-desktop",
   "version": "0.0.1",
-  "description": "My Electron application",
+  "description": "Stable Diffusion Desktop",
   "main": "app/electron/main.js",
   "private": true,
   "devDependencies": {
@@ -9,7 +9,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
     "electron": "^19.0.8",
-    "electron-builder": "^23.1.0",
+    "electron-builder": "^23.3.3",
     "html-loader": "^4.1.0",
     "html-webpack-plugin": "^5.5.0",
     "postcss-loader": "^7.0.1",
@@ -34,7 +34,7 @@
     "dist-windows": "npm run preprod && electron-builder --windows"
   },
   "build": {
-    "productName": "MyProductName",
+    "productName": "StableDiffusion",
     "appId": "com.mycompany|electron.myproductname",
     "directories": {
       "buildResources": "resources"

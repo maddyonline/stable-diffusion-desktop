@@ -5,7 +5,7 @@ const {
     shell
 } = require("electron");
 const path = require("path");
-const { fetchPrompts, fetchSettings, createPrompt, seedPrompts, seedSettings } = require("./db.js");
+const { fetchPrompts, fetchSettings, createPrompt, seedPrompts, seedSettings, fetchSettingsValue } = require("./db.js");
 
 const fs = require("fs");
 
@@ -15,7 +15,7 @@ const { runStableDiffusion } = require("./commands.js");
 
 
 
-function createWorkDir() {
+async function creatDefaults() {
     const workDir = getWorkDir();
     // Check if the directory exists
     if (!fs.existsSync(workDir)) {
@@ -32,8 +32,8 @@ function createWorkDir() {
     if (!fs.existsSync(logFile)) {
         fs.closeSync(fs.openSync(logFile, "w"));
     }
-    seedPrompts();
-    seedSettings();
+    await seedPrompts();
+    await seedSettings();
 }
 
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -62,7 +62,7 @@ async function fetchImages() {
     return base64Images;
 }
 
-function createWindow() {
+async function createWindow() {
     // Create a new window
     const window = new BrowserWindow({
         width: 1200,
@@ -73,7 +73,7 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js")
         }
     });
-    createWorkDir();
+    await creatDefaults();
     ipcMain.handle('db:fetchPrompts', async () => await fetchPrompts());
     ipcMain.handle('db:fetchSettings', async () => await fetchSettings());
     ipcMain.handle('db:createPrompt', async (_event, payload) => await createPrompt(payload));
@@ -82,9 +82,11 @@ function createWindow() {
 
 
 
-    ipcMain.on("run-channel", (_event, args) => {
+    ipcMain.on("run-channel", async (_event, args) => {
         console.log("run-channel", args);
-        runStableDiffusion(args, (progress) => {
+        const pythonPath = await fetchSettingsValue("pythonPath");
+        const pythonScript = await fetchSettingsValue("pythonScript");
+        runStableDiffusion(pythonPath, pythonScript, args, (progress) => {
             window.webContents.send("progress-channel", { args: args, progress: progress });
         });
     });

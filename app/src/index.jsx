@@ -8,6 +8,7 @@ import Prompt from "./prompt";
 
 import "./index.css";
 import History from "./history";
+import Gallery from "./gallery";
 
 const container = document.getElementById("target");
 const root = createRoot(container);
@@ -19,7 +20,7 @@ root.render(
         <Route index element={<Prompt />} />
         <Route path="prompt" element={<Prompt />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="test" element={<div>Test</div>} />
+        <Route path="gallery" element={<Gallery />} />
         <Route path="history" element={<History />} />
       </Route>
     </Routes>
