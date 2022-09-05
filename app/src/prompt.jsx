@@ -57,7 +57,9 @@ const people = [
   },
 ];
 
-export default function Example() {
+export default function PromptScreen() {
+  const promptRef = React.useRef(null);
+  const seedRef = React.useRef(null);
   return (
     <div className="mx-auto max-w-md sm:max-w-3xl">
       <div>
@@ -77,37 +79,49 @@ export default function Example() {
             />
           </svg>
           <h2 className="mt-2 text-lg font-medium text-gray-900">
-            Add team members
+            Enter a prompt to queue the image generation
           </h2>
           <p className="mt-1 text-sm text-gray-500">
-            You haven’t added any team members to your project yet.
+            You can also choose a seed to generate a deterministic image.
           </p>
         </div>
-        <form className="mt-6 sm:flex sm:items-center" action="#">
-          <label htmlFor="emails" className="sr-only">
-            Email addresses
+        <form
+          className="mt-6 sm:flex sm:items-center"
+          action="#"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const prompt = promptRef.current.value;
+            const seed = seedRef.current.value;
+            console.log(prompt, seed);
+            promptRef.current.value = "";
+            seedRef.current.value = "";
+          }}
+        >
+          <label htmlFor="prompt" className="sr-only">
+            Prompt
           </label>
           <div className="relative rounded-md shadow-sm sm:min-w-0 sm:flex-1">
             <input
+              ref={promptRef}
               type="text"
-              name="emails"
-              id="emails"
+              name="prompt"
+              id="prompt"
               className="block w-full rounded-md border-gray-300 pr-32 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="Enter an email"
+              placeholder="Enter your prompt here"
             />
             <div className="absolute inset-y-0 right-0 flex items-center">
               <span className="h-4 w-px bg-gray-200" aria-hidden="true" />
-              <label htmlFor="role" className="sr-only">
-                Role
+              <label htmlFor="prompt-seed" className="sr-only">
+                Seed
               </label>
-              <select
-                id="role"
-                name="role"
-                className="h-full rounded-md border-transparent bg-transparent py-0 pl-4 pr-7 text-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              >
-                <option>Can edit</option>
-                <option>Can view</option>
-              </select>
+              <input
+                ref={seedRef}
+                type="text"
+                name="prompt-seed"
+                id="prompt-seed"
+                className="relative block w-full rounded-none rounded-br-md border-gray-300 bg-transparent focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                placeholder="seed (default: random)"
+              />
             </div>
           </div>
           <div className="mt-3 sm:mt-0 sm:ml-4 sm:flex-shrink-0">
@@ -115,7 +129,7 @@ export default function Example() {
               type="submit"
               className="block w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              Send invite
+              Submit
             </button>
           </div>
         </form>
