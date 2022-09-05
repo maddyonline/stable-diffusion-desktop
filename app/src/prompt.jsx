@@ -70,6 +70,7 @@ export default function PromptScreen() {
             {toggle ? "-" : "+"}
           </button>
         </div>
+          <svg className="animate-spin h-5 w-5 mr-3 bg-black" viewBox="0 0 24 24"></svg>
       </form>
     </div>
   );
