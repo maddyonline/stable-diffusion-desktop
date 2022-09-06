@@ -21,6 +21,7 @@ const navigation = [
   { name: "Settings", href: "settings", icon: UsersIcon, current: false },
   { name: "Gallery", href: "gallery", icon: FolderIcon, current: false },
   { name: "History", href: "history", icon: CalendarIcon, current: false },
+  { name: "Setup", href: "setup", icon: ChartBarIcon, current: false },
 ];
 
 function classNames(...classes) {

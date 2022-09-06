@@ -10,7 +10,7 @@ const { fetchPrompts, fetchSettings, createPrompt, seedPrompts, seedSettings, fe
 const fs = require("fs");
 
 const { getWorkDir, getDBPath, getLogPath } = require("./utils.js");
-const { runStableDiffusion } = require("./commands.js");
+const { runStableDiffusion, runSetup } = require("./commands.js");
 
 const { setupScript } = require("./setup.js");
 
@@ -18,6 +18,7 @@ const { setupScript } = require("./setup.js");
 
 async function creatDefaults() {
     const workDir = getWorkDir();
+    const outputDir = path.join(workDir, "output");
     // Check if the directory exists
     if (!fs.existsSync(workDir)) {
         // If not, create it
@@ -26,7 +27,7 @@ async function creatDefaults() {
     // Write setup script to the work directory
     const setupScriptPath = path.join(workDir, "setup.sh");
     // write script to the file with executable permissions
-    fs.writeFileSync(setupScriptPath, setupScript(workDir), { mode: 0o755 });
+    fs.writeFileSync(setupScriptPath, setupScript(workDir, outputDir), { mode: 0o755 });
 
     // Create a sqlite database file if it doesn't exist
     const dbFile = getDBPath();
@@ -103,6 +104,15 @@ async function createWindow() {
         runStableDiffusion(pythonPath, pythonScript, outputDir, args, (progress) => {
             window.webContents.send("progress-channel", { args: args, progress: progress });
         });
+    });
+
+    ipcMain.on("setup-channel", async () => {
+        const setupScriptPath = path.join(workDir, "setup.sh");
+        console.log("setup-channel", setupScriptPath);
+        runSetup(setupScriptPath, (progress) => {
+            window.webContents.send("terminal-channel", { progress: progress });
+        });
+
     });
 
     // Event listeners on the window

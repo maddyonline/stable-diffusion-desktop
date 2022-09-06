@@ -1,4 +1,4 @@
-const setupScript = (workingDir) => `
+const setupScript = (workingDir, outputDir) => `
 #!/usr/bin/env bash
 
 set -o xtrace
@@ -64,9 +64,8 @@ which pip
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# run demo.py with following args: ["--prompt", "Hand drawn sketch of donald trump in style of Picasso", "--seed", "42", "--output", "/Users/madhav/diffusion-app/output.png"]
-python demo.py --prompt "Hand drawn sketch of donald trump in style of Picasso" --seed 42 --output output.png
-
+python demo.py --prompt "Hand drawn sketch of donald trump in style of Picasso" --num-inference-steps 2 --seed 42 --output ${outputDir}/test.png
+echo "Setup Successful"
 `
 
 module.exports = {

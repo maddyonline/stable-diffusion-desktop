@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld("api", {
     openFolderWorkDir: () => ipcRenderer.invoke('sh:openFolderWorkDir'),
     // fire and forget functions (Renderer -> Main)
     run: (name) => ipcRenderer.send('run-channel', name),
+    runSetup: () => ipcRenderer.send('setup-channel'),
     // listen for events (Main -> Renderer)
     listenForProgress: (callback) => {
         const handler = (_event, ...args) => callback(...args);
@@ -19,6 +20,14 @@ contextBridge.exposeInMainWorld("api", {
         return () => {
             console.log("removing listener")
             ipcRenderer.removeListener("progress-channel", handler);
+        }
+    },
+    listenTerminalProgress: (callback) => {
+        const handler = (_event, ...args) => callback(...args);
+        ipcRenderer.on("terminal-channel", handler);
+        return () => {
+            console.log("removing listener")
+            ipcRenderer.removeListener("terminal-channel", handler);
         }
     },
 });

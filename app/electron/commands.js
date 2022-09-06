@@ -2,6 +2,35 @@ var path = require("path");
 var spawn = require('child_process').spawn;
 const fs = require("fs");
 
+async function runSetup(scriptPath, reportProgress) {
+    console.log("running setup script", scriptPath);
+    const cmd = spawn("bash", [scriptPath]);
+    cmd.stdout.on('data', function (data) {
+        console.log('Pipe data from setup script ...');
+        console.log(data.toString());
+        reportProgress({ "stdout": data.toString() });
+    });
+
+    // Stream stderr to console
+    cmd.stderr.on('data', function (data) {
+        console.log(`stderr: ${data.toString()}`);
+        reportProgress({ "stderr": data.toString() });
+    });
+
+    // In close event we are sure that stream from child process is closed
+    cmd.on('close', function (code) {
+        console.log(`child process close all stdio with code ${code}`);
+        reportProgress({ "close": code });
+        // send data to browser
+    });
+
+    // Handle exit event
+    cmd.on('exit', function (code) {
+        console.log(`child process exited with code ${code}`);
+        reportProgress({ "exit": code });
+    });
+}
+
 async function runStableDiffusion(pythonPath, pythonScript, outputDir, { prompt, seed, iterations, key }, reportProgress) {
 
     // Make output directory if it doesn't exist
@@ -57,5 +86,6 @@ async function runStableDiffusion(pythonPath, pythonScript, outputDir, { prompt,
 }
 
 module.exports = {
+    runSetup,
     runStableDiffusion,
 }
