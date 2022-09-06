@@ -76,12 +76,23 @@ async function seedPrompts() {
 
 
 const settingsFixture = [
+    ["theme", "dark"],
+    ["language", "en"],
     ["pythonPath", getPythonPath()],
     ["pythonScript", getPythonScript()],
 ];
 
-async function seedSettings() {
+async function seedSettings(force = false) {
     await sequelize.sync();
+    if (force) {
+        // force update settings based on settingsFixture
+        for (const [key, value] of settingsFixture) {
+            await Settings.upsert({
+                key,
+                value
+            });
+        }
+    }
     // if key does not exist, create it with the default value above
     for (const [key, value] of settingsFixture) {
         await Settings.findOrCreate({
@@ -122,13 +133,16 @@ module.exports = {
         });
         return setting.dataValues.value;
     },
-    updateSettings: async (payload) => {
-        console.log(`updating with following payload`, payload);
-        await Settings.update(payload, {
+    updateSettings: async ({ key, value }) => {
+        // Since key is the primary key, we update the unique value corresponding to the key
+        await Settings.update({
+            value
+        }, {
             where: {
-                key: payload.key
+                key
             }
         });
+
     },
     seedPrompts,
     seedSettings,

@@ -27,7 +27,7 @@ export default function Gallery() {
             images.map((image, index) => (
               <div key={index} className="group relative">
                 <div
-                  onClick={() => window.api.openFolder()}
+                  onClick={() => window.api.openFolderOutputDir()}
                   className="min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:aspect-none lg:h-80"
                 >
                   <img

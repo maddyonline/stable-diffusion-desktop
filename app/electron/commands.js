@@ -1,9 +1,14 @@
 var path = require("path");
 var spawn = require('child_process').spawn;
+const fs = require("fs");
 
-async function runStableDiffusion(pythonPath, pythonScript, { prompt, seed, iterations, key }, reportProgress) {
+async function runStableDiffusion(pythonPath, pythonScript, outputDir, { prompt, seed, iterations, key }, reportProgress) {
 
-    const outputDir = "/Users/madhav/diffusion-app";
+    // Make output directory if it doesn't exist
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+    }
+
     const pythonScriptArgs = [
         "--num-inference-steps", iterations,
         "--prompt", prompt, "--seed", seed, "--output"];

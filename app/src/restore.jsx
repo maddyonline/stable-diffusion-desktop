@@ -5,26 +5,9 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
-function EditInput({ value, setValue }) {
-  return (
-    <div>
-      <div className="mt-1">
-        <input
-          onChange={(e) => setValue(e.target.value)}
-          type="text"
-          name="input-text"
-          id="input-text"
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          value={value}
-        />
-      </div>
-    </div>
-  );
-}
-
-export default function EditModal({ editing, onDone }) {
+export default function RestoreModal({ onDone }) {
+  console.log("hello")
   const [open, setOpen] = useState(true);
-  const [value, setValue] = useState(editing.value);
 
   const cancelButtonRef = useRef(null);
 
@@ -79,13 +62,13 @@ export default function EditModal({ editing, onDone }) {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                      Editing {`${editing?.key}`}
+                      Restore Defaults
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Are you sure you want to edit this setting?
+                        Are you sure you want to restore all settings to their
+                        default values?
                       </p>
-                      <EditInput value={value} setValue={setValue} />
                     </div>
                   </div>
                 </div>
@@ -94,18 +77,12 @@ export default function EditModal({ editing, onDone }) {
                     type="button"
                     className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={async () => {
-                      const randomString = Math.random()
-                        .toString(36)
-                        .substring(7);
-                      await window.api.updateSettings({
-                        key: editing.key,
-                        value,
-                      });
+                      await window.api.restoreDefaults();
                       setOpen(false);
                       onDone();
                     }}
                   >
-                    Update
+                    Yes
                   </button>
                   <button
                     type="button"

@@ -5,13 +5,14 @@ const {
     shell
 } = require("electron");
 const path = require("path");
-const { fetchPrompts, fetchSettings, createPrompt, seedPrompts, seedSettings, fetchSettingsValue } = require("./db.js");
+const { fetchPrompts, fetchSettings, createPrompt, seedPrompts, seedSettings, fetchSettingsValue, updateSettings } = require("./db.js");
 
 const fs = require("fs");
 
 const { getWorkDir, getDBPath, getLogPath } = require("./utils.js");
 const { runStableDiffusion } = require("./commands.js");
 
+const { setupScript } = require("./setup.js");
 
 
 
@@ -22,6 +23,11 @@ async function creatDefaults() {
         // If not, create it
         fs.mkdirSync(workDir);
     }
+    // Write setup script to the work directory
+    const setupScriptPath = path.join(workDir, "setup.sh");
+    // write script to the file with executable permissions
+    fs.writeFileSync(setupScriptPath, setupScript(workDir), { mode: 0o755 });
+
     // Create a sqlite database file if it doesn't exist
     const dbFile = getDBPath();
     if (!fs.existsSync(dbFile)) {
@@ -41,22 +47,23 @@ const isDevelopment = process.env.NODE_ENV === "development";
 async function fetchImages() {
 
     const workDir = getWorkDir();
+    const outputDir = path.join(workDir, "output");
     // return top 10 images in the work directory based on their modification time
-    const images = await fs.promises.readdir(workDir, { withFileTypes: true });
+    const images = await fs.promises.readdir(outputDir, { withFileTypes: true });
     const imageFiles = images.filter((image) => image.isFile()).map((image) => image.name);
     // keep only png files
     const pngFiles = imageFiles.filter((image) => image.endsWith(".png"));
     // sort by modification time
     const sortedFiles = pngFiles.sort((a, b) => {
-        const aTime = fs.statSync(path.join(workDir, a)).mtime;
-        const bTime = fs.statSync(path.join(workDir, b)).mtime;
+        const aTime = fs.statSync(path.join(outputDir, a)).mtime;
+        const bTime = fs.statSync(path.join(outputDir, b)).mtime;
         return bTime - aTime;
     });
     // keep top 5 files
     const topFiles = sortedFiles.slice(0, 5);
     // return base64 encoded images
     const base64Images = topFiles.map((image) => {
-        const imageFile = fs.readFileSync(path.join(workDir, image));
+        const imageFile = fs.readFileSync(path.join(outputDir, image));
         return imageFile.toString("base64");
     });
     return base64Images;
@@ -74,11 +81,17 @@ async function createWindow() {
         }
     });
     await creatDefaults();
+    const workDir = getWorkDir();
+    const outputDir = path.join(workDir, "output");
+
     ipcMain.handle('db:fetchPrompts', async () => await fetchPrompts());
     ipcMain.handle('db:fetchSettings', async () => await fetchSettings());
+    ipcMain.handle('db:restoreDefaults', async () => await seedSettings(true));
+    ipcMain.handle('db:updateSettings', async (_event, { key, value }) => await updateSettings({ key, value }));
     ipcMain.handle('db:createPrompt', async (_event, payload) => await createPrompt(payload));
     ipcMain.handle('fs:fetchImages', async () => await fetchImages());
-    ipcMain.handle('sh:openFolder', () => shell.openPath(app.getPath("home")));
+    ipcMain.handle('sh:openFolderOutputDir', () => shell.openPath(outputDir));
+    ipcMain.handle('sh:openFolderWorkDir', () => shell.openPath(workDir));
 
 
 
@@ -86,7 +99,8 @@ async function createWindow() {
         console.log("run-channel", args);
         const pythonPath = await fetchSettingsValue("pythonPath");
         const pythonScript = await fetchSettingsValue("pythonScript");
-        runStableDiffusion(pythonPath, pythonScript, args, (progress) => {
+
+        runStableDiffusion(pythonPath, pythonScript, outputDir, args, (progress) => {
             window.webContents.send("progress-channel", { args: args, progress: progress });
         });
     });
