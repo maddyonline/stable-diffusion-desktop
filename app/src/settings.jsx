@@ -4,7 +4,6 @@ import EditModal from "./edit.jsx";
 import RestoreModal from "./restore.jsx";
 
 export default function SettingsTable() {
-  const [toggleSetup, setToggleSetup] = React.useState(false);
   const [restoring, setRestoring] = React.useState(false);
   const [editing, setEditing] = React.useState(null);
   const { mutate } = useSWRConfig();
@@ -40,16 +39,9 @@ export default function SettingsTable() {
         >
           Restore Defaults
         </button>
-        <button
-          onClick={() => setToggleSetup(!toggleSetup)}
-          className="block rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Setup
-        </button>
+
       </div>
-      {toggleSetup && <div>
-        Run setup.sh in a terminal. You can find the file <span onClick={() => window.api.openFolderWorkDir()} className=" text-white bg-indigo-600 ">here</span>
-        </div>}
+
 
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
