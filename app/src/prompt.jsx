@@ -16,6 +16,17 @@ const ProgressBar = ({ progress, progressMax, prompt, seed }) => {
   );
 };
 
+function finished(progress, progressMax) {
+  try {
+    const curr = parseInt(progress);
+    const max = parseInt(progressMax);
+    return curr >= max;
+  } catch (e) {
+    return false;
+  }
+  return progress >= progressMax;
+}
+
 export default function PromptScreen() {
   const [seed, setSeed] = React.useState(42);
   const [prompt, setPrompt] = React.useState(DEFAULT_PROMPT);
@@ -28,13 +39,15 @@ export default function PromptScreen() {
   const iterRef = React.useRef(null);
 
   React.useEffect(() => {
+    console.log({ running, progressMax, setProgress, setRunning });
     if (!running) {
       return;
     }
     return window.api.listenForProgress((e) => {
       console.log("received progress", e);
       setProgress(e.progress.iterations);
-      if (e.progress.iterations >= progressMax) {
+      if (finished(e.progress.iterations, progressMax)) {
+        console.log("done");
         setRunning(false);
         setProgress(0);
       }

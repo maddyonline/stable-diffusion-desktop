@@ -24,6 +24,11 @@ async function creatDefaults() {
         // If not, create it
         fs.mkdirSync(workDir);
     }
+    // create a logs directory
+    if (!fs.existsSync(path.join(workDir, "logs"))) {
+        // If not, create it
+        fs.mkdirSync(path.join(workDir, "logs"));
+    }
     // Write setup script to the work directory
     const setupScriptPath = path.join(workDir, "setup.sh");
     // write script to the file with executable permissions
@@ -84,6 +89,7 @@ async function createWindow() {
     await creatDefaults();
     const workDir = getWorkDir();
     const outputDir = path.join(workDir, "output");
+    const logsDir = path.join(workDir, "logs");
 
     ipcMain.handle('db:fetchPrompts', async () => await fetchPrompts());
     ipcMain.handle('db:fetchSettings', async () => await fetchSettings());
@@ -93,6 +99,8 @@ async function createWindow() {
     ipcMain.handle('fs:fetchImages', async () => await fetchImages());
     ipcMain.handle('sh:openFolderOutputDir', () => shell.openPath(outputDir));
     ipcMain.handle('sh:openFolderWorkDir', () => shell.openPath(workDir));
+    ipcMain.handle('sh:openLinkGithub', () => shell.openExternal("https://github.com/maddyonline/stable-diffusion-desktop"));
+    ipcMain.handle('sh:openLinkTwitter', () => shell.openExternal("https://twitter.com/madhavjha"));
 
 
 
@@ -101,7 +109,7 @@ async function createWindow() {
         const pythonPath = await fetchSettingsValue("pythonPath");
         const pythonScript = await fetchSettingsValue("pythonScript");
 
-        runStableDiffusion(pythonPath, pythonScript, outputDir, args, (progress) => {
+        runStableDiffusion(pythonPath, pythonScript, outputDir, logsDir, args, (progress) => {
             window.webContents.send("progress-channel", { args: args, progress: progress });
         });
     });

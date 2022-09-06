@@ -31,7 +31,7 @@ async function runSetup(scriptPath, reportProgress) {
     });
 }
 
-async function runStableDiffusion(pythonPath, pythonScript, outputDir, { prompt, seed, iterations, key }, reportProgress) {
+async function runStableDiffusion(pythonPath, pythonScript, outputDir, logsDir, { prompt, seed, iterations, key }, reportProgress) {
 
     // Make output directory if it doesn't exist
     if (!fs.existsSync(outputDir)) {
@@ -45,8 +45,23 @@ async function runStableDiffusion(pythonPath, pythonScript, outputDir, { prompt,
     const outputFilepath = path.join(outputDir, outputFilename);
     pythonScriptArgs.push(outputFilepath);
 
+    // use the same log name as the output file except with .log extension
+    // seprate files for stdout and stderr
+    const stdoutLogFilename = outputFilename.replace(".png", ".stdout.log");
+    const stderrLogFilename = outputFilename.replace(".png", ".stderr.log");
+
     console.log("running python script with args", pythonScriptArgs);
     const cmd = spawn(pythonPath, [pythonScript, ...pythonScriptArgs]);
+
+    // tee log files
+    const stdoutLogStream = fs.createWriteStream(path.join(logsDir, stdoutLogFilename));
+    const stderrLogStream = fs.createWriteStream(path.join(logsDir, stderrLogFilename));
+
+    cmd.stdout.pipe(stdoutLogStream);
+    cmd.stderr.pipe(stderrLogStream);
+
+
+
     cmd.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');
         console.log(data.toString());

@@ -22,6 +22,7 @@ const navigation = [
   { name: "Gallery", href: "gallery", icon: FolderIcon, current: false },
   { name: "History", href: "history", icon: CalendarIcon, current: false },
   { name: "Setup", href: "setup", icon: ChartBarIcon, current: false },
+  { name: "Contact", href: "contact", icon: InboxIcon, current: false },
 ];
 
 function classNames(...classes) {

@@ -10,6 +10,7 @@ import "./index.css";
 import History from "./history";
 import Gallery from "./gallery";
 import Terminal from "./terminal";
+import Contact from "./contact";
 
 const container = document.getElementById("target");
 const root = createRoot(container);
@@ -24,6 +25,7 @@ root.render(
         <Route path="gallery" element={<Gallery />} />
         <Route path="history" element={<History />} />
         <Route path="setup" element={<Terminal />} />
+        <Route path="contact" element={<Contact />} />
       </Route>
     </Routes>
   </HashRouter>

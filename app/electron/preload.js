@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld("api", {
     fetchImages: () => ipcRenderer.invoke('fs:fetchImages'),
     openFolderOutputDir: () => ipcRenderer.invoke('sh:openFolderOutputDir'),
     openFolderWorkDir: () => ipcRenderer.invoke('sh:openFolderWorkDir'),
+    openLinkTwitter: () => ipcRenderer.invoke('sh:openLinkTwitter'),
+    openLinkGithub: () => ipcRenderer.invoke('sh:openLinkGithub'),
     // fire and forget functions (Renderer -> Main)
     run: (name) => ipcRenderer.send('run-channel', name),
     runSetup: () => ipcRenderer.send('setup-channel'),
