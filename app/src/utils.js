@@ -1,1 +1,1 @@
-export const DEFAULT_PROMPT = "Trump on a high horse with lil Nas X singing in the background"
+export const DEFAULT_PROMPT = "high quality 3d render very cute fluffy cyborg dog plays drums"

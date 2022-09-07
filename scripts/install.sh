@@ -24,7 +24,11 @@ pwd
 
 brew update
 
-brew install pyenv
+# install pyenv and ignore if it is already installed
+
+brew install pyenv || true
+
+echo "done installing pyenv"
 
 command pyenv install 3.8.10 --skip-existing 
 command pyenv local 3.8.10
