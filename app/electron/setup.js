@@ -28,7 +28,7 @@ pwd
 /usr/local/bin/brew install pyenv || true
 
 # check if pyenv is installed and print if is installed
-if command -v pyenv &> /dev/null
+if command pyenv -v &> /dev/null
 then
     echo "pyenv is installed"
 else
