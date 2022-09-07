@@ -3,7 +3,7 @@ const setupScript = (workingDir, outputDir) => `
 
 set -o xtrace
 
-
+PYTHON_VERSION=3.8.10
 WORKING_DIR=${workingDir}
 PYTHON_DIR=python-dir
 
@@ -23,23 +23,34 @@ cd "$WORKING_DIR/$PYTHON_DIR"
 # print current directory
 pwd
 
-brew update
+/usr/local/bin/brew update
 
-brew install pyenv
+/usr/local/bin/brew install pyenv || true
 
-command pyenv install 3.8.10 --skip-existing 
-command pyenv local 3.8.10
-command pyenv local
+# check if pyenv is installed and print if is installed
+if command -v pyenv &> /dev/null
+then
+    echo "pyenv is installed"
+else
+    echo "pyenv could not be installed"
+    exit
+fi
 
-eval "$(command pyenv init --path)"
+command pyenv install $PYTHON_VERSION --skip-existing 
 
-command pyenv shell 3.8.10
+# set the local python version
+command pyenv local $PYTHON_VERSION
 
-# list all files including hidden files
-ls -a
+# verify the local python version
+command pyenv exec python -V
+command pyenv versions
+command pyenv prefix
+
+# print current directory
+pwd
 
 # create virtual environment
-python -m venv venv
+command pyenv exec python -m venv venv
 
 # activate virtual environment
 source venv/bin/activate

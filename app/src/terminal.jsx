@@ -24,7 +24,7 @@ export default function Trivial() {
     const extract = (x) => (x && x.split("\n")) || [];
     lines.push(...extract(p.progress?.stdout));
     lines.push(...extract(p.progress?.stderr));
-    console.log({lines});
+    console.log({ lines });
     return lines.map((line, index) => {
       return (
         <div key={index}>
@@ -70,7 +70,10 @@ export default function Trivial() {
             <div className="ml-2 h-3 w-3 bg-green-500 rounded-full"></div>
           </div>
           <div className="mt-4 flex">
-            <ul className="list-disc list-inside">
+            <ul
+              style={{ listStyleType: "none" }}
+              className="list-disc list-inside"
+            >
               {progress.map((p, index) => (
                 <li key={index} className=" pl-2">
                   <PrintLines p={p} />
