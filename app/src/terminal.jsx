@@ -18,6 +18,22 @@ export default function Trivial() {
     });
   }, [running, progress, setProgress]);
 
+  const PrintLines = ({ p }) => {
+    console.log(`printing lines for`, p);
+    const lines = [];
+    const extract = (x) => (x && x.split("\n")) || [];
+    lines.push(...extract(p.progress?.stdout));
+    lines.push(...extract(p.progress?.stderr));
+    console.log({lines});
+    return lines.map((line, index) => {
+      return (
+        <div key={index}>
+          <pre>{line}</pre>
+        </div>
+      );
+    });
+  };
+
   return (
     <>
       <div>
@@ -57,7 +73,8 @@ export default function Trivial() {
             <ul className="list-disc list-inside">
               {progress.map((p, index) => (
                 <li key={index} className=" pl-2">
-                  {JSON.stringify(p.progress)}
+                  <PrintLines p={p} />
+                  {/* {JSON.stringify(p.progress)} */}
                 </li>
               ))}
             </ul>
