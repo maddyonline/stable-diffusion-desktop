@@ -70,11 +70,6 @@ fi
 
 
 
-
-# make sure pyenv is in the path
-# eval "$(command pyenv init --path)"
-
-
 # install python version
 command pyenv install $PYTHON_VERSION --skip-existing
 
