@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, BrowserRouter, Routes, Route } from "react-router-dom";
 
-import App from "./App";
+import App from "./app";
 import Settings from "./settings";
 import Prompt from "./prompt";
 
