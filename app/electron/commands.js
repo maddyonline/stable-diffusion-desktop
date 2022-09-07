@@ -7,9 +7,11 @@ async function runSetup(scriptPath, reportProgress) {
     const cmd = spawn("bash", [scriptPath]);
     // create a logs folder next to scriptPath
     const logsDir = path.join(path.dirname(scriptPath), "logs");
+    // recursively create logs folder if it doesn't exist
     if (!fs.existsSync(logsDir)) {
-        fs.mkdirSync(logsDir);
+        fs.mkdirSync(logsDir, { recursive: true });
     }
+   
     // tee log files
     const stdoutLogStream = fs.createWriteStream(path.join(logsDir, "setup.stdout.log"));
     const stderrLogStream = fs.createWriteStream(path.join(logsDir, "setup.stderr.log"));

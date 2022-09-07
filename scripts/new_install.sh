@@ -4,6 +4,10 @@ set -o xtrace
 
 
 
+
+
+
+
 # A bash script which takes two arguments:
 # 1. The path to the directory where the stable_diffusion.openvino repository will be cloned to.
 # 2. The python version to be used.

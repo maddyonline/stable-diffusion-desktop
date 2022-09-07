@@ -27,30 +27,25 @@ pwd
 
 /usr/local/bin/brew install pyenv || true
 
-# check if pyenv is installed and print if is installed
-if command pyenv -v &> /dev/null
-then
-    echo "pyenv is installed"
-else
-    echo "pyenv could not be installed"
-    exit
-fi
 
-command pyenv install $PYTHON_VERSION --skip-existing 
+
+/usr/local/bin/pyenv --version
+
+/usr/local/bin/pyenv install $PYTHON_VERSION --skip-existing 
 
 # set the local python version
-command pyenv local $PYTHON_VERSION
+/usr/local/bin/pyenv local $PYTHON_VERSION
 
 # verify the local python version
-command pyenv exec python -V
-command pyenv versions
-command pyenv prefix
+/usr/local/bin/pyenv exec python -V
+/usr/local/bin/pyenv versions
+/usr/local/bin/pyenv prefix
 
 # print current directory
 pwd
 
 # create virtual environment
-command pyenv exec python -m venv venv
+/usr/local/bin/pyenv exec python -m venv venv
 
 # activate virtual environment
 source venv/bin/activate

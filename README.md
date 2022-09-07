@@ -1,6 +1,10 @@
 # Notes
 
 ```
+nvm install v16.13.0
+```
+
+```
 nvm use
 npm install
 

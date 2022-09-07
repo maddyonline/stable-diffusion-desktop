@@ -13,22 +13,29 @@ const { getWorkDir, getDBPath, getLogPath } = require("./utils.js");
 const { runStableDiffusion, runSetup } = require("./commands.js");
 
 const { setupScript } = require("./setup.js");
+const fetch = require("node-fetch");
 
 
 
 async function creatDefaults() {
+    const IMG_URL = "https://upload.wikimedia.org/wikipedia/commons/3/32/A_photograph_of_an_astronaut_riding_a_horse_2022-08-28.png";
     const workDir = getWorkDir();
     const outputDir = path.join(workDir, "output");
-    // Check if the directory exists
-    if (!fs.existsSync(workDir)) {
-        // If not, create it
-        fs.mkdirSync(workDir);
+    const logsDir = path.join(workDir, "logs");
+
+    // create outputDir and logsDir if they don't exist (recursively)
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
     }
-    // create a logs directory
-    if (!fs.existsSync(path.join(workDir, "logs"))) {
-        // If not, create it
-        fs.mkdirSync(path.join(workDir, "logs"));
+    if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true });
     }
+    // write IMG_URL to outputDir
+    const imageFile = await fetch(IMG_URL);
+    const imageBuffer = await imageFile.buffer();
+    fs.writeFileSync(path.join(outputDir, "astronaut.png"), imageBuffer);
+
+
     // Write setup script to the work directory
     const setupScriptPath = path.join(workDir, "setup.sh");
     // write script to the file with executable permissions
