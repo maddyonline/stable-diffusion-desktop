@@ -7,20 +7,18 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.13.0]
-
+ build:
+    runs-on: macos-10.15
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm run preprod
-      - run: npm run dist-mac
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16.14.2
+    - name: install dependencies
+      run: npm install
+    - name: install dmg-license
+      run: npm i dmg-license
+    - name: build
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run dist-mac
