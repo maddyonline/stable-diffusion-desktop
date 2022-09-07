@@ -5,6 +5,18 @@ const fs = require("fs");
 async function runSetup(scriptPath, reportProgress) {
     console.log("running setup script", scriptPath);
     const cmd = spawn("bash", [scriptPath]);
+    // create a logs folder next to scriptPath
+    const logsDir = path.join(path.dirname(scriptPath), "logs");
+    if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir);
+    }
+    // tee log files
+    const stdoutLogStream = fs.createWriteStream(path.join(logsDir, "setup.stdout.log"));
+    const stderrLogStream = fs.createWriteStream(path.join(logsDir, "setup.stderr.log"));
+
+    cmd.stdout.pipe(stdoutLogStream);
+    cmd.stderr.pipe(stderrLogStream);
+
     cmd.stdout.on('data', function (data) {
         console.log('Pipe data from setup script ...');
         console.log(data.toString());

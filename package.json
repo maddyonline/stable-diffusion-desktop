@@ -1,6 +1,6 @@
 {
   "name": "stable-diffusion-desktop",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Stable Diffusion Desktop",
   "main": "app/electron/main.js",
   "private": true,
@@ -29,7 +29,7 @@
     "postinstall": "electron-builder install-app-deps",
     "pack": "electron-builder --dir",
     "dist": "npm run preprod && electron-builder",
-    "dist-mac": "npm run preprod && electron-builder --mac --publish=always",
+    "dist-mac": "npm run preprod && electron-builder --mac --publish=onTag",
     "dist-linux": "npm run preprod && electron-builder --linux",
     "dist-windows": "npm run preprod && electron-builder --windows"
   },
