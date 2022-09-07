@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 
 module.exports = {
+    context: __dirname,
     entry: "./app/src/index.jsx",
     output: {
         path: path.resolve(__dirname, "app/dist"),
