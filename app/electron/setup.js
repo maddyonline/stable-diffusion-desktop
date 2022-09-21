@@ -23,9 +23,19 @@ cd "$WORKING_DIR/$PYTHON_DIR"
 # print current directory
 pwd
 
-/usr/local/bin/brew update
+# check if brew is installed
+if ! command -v brew &> /dev/null
+then
+  echo "brew could not be found"
+  exit
+fi
 
-/usr/local/bin/brew install pyenv || true
+
+echo "This setup may take a while. Please be patient."
+
+brew update
+
+brew install pyenv || true
 
 
 

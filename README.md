@@ -16,4 +16,10 @@ npm run dev
 ```
 # Release steps
 
-Details to follow.
+```
+git config --global push.followTags true
+```
+
+```
+git tag -a v0.0.6 -m 'version 006'
+```
