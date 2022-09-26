@@ -1,4 +1,4 @@
-# Notes
+# Setup
 
 ```
 nvm install v16.13.0
