@@ -10,50 +10,9 @@ const { fetchPrompts, fetchSettings, createPrompt, seedPrompts, seedSettings, fe
 const fs = require("fs");
 
 const { getWorkDir, getDBPath, getLogPath } = require("./utils.js");
+const { setupWorkDir } = require("./setuputils.js");
 const { runStableDiffusion, runSetup } = require("./commands.js");
 
-const { setupScript } = require("./setup.js");
-const fetch = require("node-fetch");
-
-
-
-async function creatDefaults() {
-    const IMG_URL = "https://upload.wikimedia.org/wikipedia/commons/3/32/A_photograph_of_an_astronaut_riding_a_horse_2022-08-28.png";
-    const workDir = getWorkDir();
-    const outputDir = path.join(workDir, "output");
-    const logsDir = path.join(workDir, "logs");
-
-    // create outputDir and logsDir if they don't exist (recursively)
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
-    }
-    if (!fs.existsSync(logsDir)) {
-        fs.mkdirSync(logsDir, { recursive: true });
-    }
-    // write IMG_URL to outputDir
-    const imageFile = await fetch(IMG_URL);
-    const imageBuffer = await imageFile.buffer();
-    fs.writeFileSync(path.join(outputDir, "astronaut.png"), imageBuffer);
-
-
-    // Write setup script to the work directory
-    const setupScriptPath = path.join(workDir, "setup.sh");
-    // write script to the file with executable permissions
-    fs.writeFileSync(setupScriptPath, setupScript(workDir, outputDir), { mode: 0o755 });
-
-    // Create a sqlite database file if it doesn't exist
-    const dbFile = getDBPath();
-    if (!fs.existsSync(dbFile)) {
-        fs.closeSync(fs.openSync(dbFile, "w"));
-    }
-    // Create a log file if it doesn't exist
-    const logFile = getLogPath();
-    if (!fs.existsSync(logFile)) {
-        fs.closeSync(fs.openSync(logFile, "w"));
-    }
-    await seedPrompts();
-    await seedSettings();
-}
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -93,8 +52,20 @@ async function createWindow() {
             preload: path.join(__dirname, "preload.js")
         }
     });
-    await creatDefaults();
     const workDir = getWorkDir();
+    await setupWorkDir(workDir);
+    // Create a sqlite database file if it doesn't exist
+    const dbFile = getDBPath();
+    if (!fs.existsSync(dbFile)) {
+        fs.closeSync(fs.openSync(dbFile, "w"));
+    }
+    // Create a log file if it doesn't exist
+    const logFile = getLogPath();
+    if (!fs.existsSync(logFile)) {
+        fs.closeSync(fs.openSync(logFile, "w"));
+    }
+    await seedPrompts();
+    await seedSettings();
     const outputDir = path.join(workDir, "output");
     const logsDir = path.join(workDir, "logs");
 

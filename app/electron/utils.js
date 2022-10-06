@@ -13,6 +13,8 @@ const pythonScript = ["python-dir", "stable_diffusion.openvino", "demo.py"]
 const getPythonPath = () => path.join(getWorkDir(), ...pythonPath);
 const getPythonScript = () => path.join(getWorkDir(), ...pythonScript);
 
+
+
 module.exports = {
     getWorkDir,
     getDBPath,

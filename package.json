@@ -21,6 +21,7 @@
     "webpack-merge": "^5.8.0"
   },
   "scripts": {
+    "test-setup": "node ./app/try_setup.js",
     "local": "node ./app/electron/runner.js",
     "dev-server": "webpack serve --mode development --config ./webpack.development.js",
     "dev": "cross-env NODE_ENV=development electron .",

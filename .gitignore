@@ -132,3 +132,4 @@ dist
 # DB
 *.db
 .DS_Store
+local-work-dir/

@@ -16,8 +16,10 @@ jobs:
         node-version: 16.14.2
     - name: install dependencies
       run: npm install
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+    - name: test local setup
+      run: npm run test-setup
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
     # - name: install dmg-license
     #   run: npm i dmg-license
     # - name: build
