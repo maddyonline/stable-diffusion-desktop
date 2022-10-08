@@ -1,3 +1,7 @@
+# Stable Diffusion on Mac
+
+![image](https://user-images.githubusercontent.com/6402895/194698031-a652b832-6fe5-4985-9611-669e7d451f1f.png)
+
 # Setup
 
 ```
