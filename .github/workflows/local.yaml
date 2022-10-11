@@ -20,9 +20,9 @@ jobs:
       run: npm run test-setup
     # - name: Setup tmate session
     #   uses: mxschmitt/action-tmate@v3
-    # - name: install dmg-license
-    #   run: npm i dmg-license
-    # - name: build
-    #   env:
-    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   run: npm run dist-mac
+    - name: install dmg-license
+      run: npm i dmg-license
+    - name: build
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run dist-mac
