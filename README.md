@@ -24,6 +24,13 @@ npm run dev
 git config --global push.followTags true
 ```
 
+Update `version` in `package.json` to (say) `0.0.8`.
+
 ```
-git tag -a v0.0.6 -m 'version 006'
+git status
+git add .
+git status
+git commit -m 'version bump'
+git tag -a v0.0.8 -m 'version 008'
+git push
 ```
